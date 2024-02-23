@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -14,7 +15,7 @@ use Inertia\Inertia;
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+ */
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -24,6 +25,15 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+//Adding route to the FileController
+Route::controller(FileController::class)
+    ->middleware(['auth', 'verified'])
+    ->group(function () {
+        Route::get('/my-files/{folder?}', 'myFiles')
+            ->where('folder', '(.*)')->name('myFiles');
+        Route::post('/folder/create', 'createFolder')->name('folder.create');
+    });
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -35,4 +45,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
