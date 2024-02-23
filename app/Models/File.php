@@ -29,7 +29,7 @@ class File extends Model
 
     public function isRoot()
     {
-        return $this->parent_id == null;
+        return $this->parent_id === null;
     }
 
     //setting the value of the owner

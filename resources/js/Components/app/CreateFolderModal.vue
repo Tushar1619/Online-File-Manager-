@@ -51,13 +51,12 @@ import PrimaryButton from "../PrimaryButton.vue";
 import { nextTick, ref } from "vue";
 
 const folderNameInput = ref(null);
+const page = usePage();
 
 const form = useForm({
     name: "",
     parent_id: null,
 });
-
-const page = usePage();
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -67,7 +66,7 @@ const { modelValue } = defineProps({
 
 function createFolder() {
     //getting value of id
-    form.parent_id = page.props.folder.id;
+    form.parent_id = page.props.folder.data.id;
     //used  to send a post request
     form.post(route("folder.create"), {
         preserveScroll: true,
