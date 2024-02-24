@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreFileRequest;
 use App\Http\Requests\StoreFolderRequest;
 use App\Http\Resources\FileResource;
 use App\Models\File;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Kalnoy\Nestedset\NodeTrait;
 
 class FileController extends Controller
 {
+    use NodeTrait;
     public function myFiles(string $folder = null)
     {
         if ($folder) {
@@ -21,7 +24,6 @@ class FileController extends Controller
 
         if (!$folder) {
             $folder = $this->getRoot();
-
         }
 
         //we are trying to get the root of the folder
@@ -54,14 +56,23 @@ class FileController extends Controller
         $file = new File();
         $file->is_folder = 1;
         $file->name = $data['name'];
+        // Ensure that $parent is of the correct type
+        if (!$parent instanceof File) {
+            throw new \InvalidArgumentException('$parent must be an instance of Kalnoy\Nestedset\Node');
+        }
 
         $parent->appendNode($file);
+    }
+
+    public function store(StoreFileRequest $request)
+    {
+        $data = $request->validated();
+        dd($data);
     }
 
     private function getRoot()
     {
         //whereIsRoot is used to get only the root nodes
-        return File::query()->whereIsRoot()
-            ->where('created_by', Auth::id())->firstOrFail();
+        return File::query()->whereIsRoot()->where('created_by', Auth::id())->firstOrFail();
     }
 }

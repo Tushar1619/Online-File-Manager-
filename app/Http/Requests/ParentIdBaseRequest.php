@@ -18,6 +18,7 @@ class ParentIdBaseRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        // parent vo hoga jiski id input file ke parent_id ke barabar ho
         $this->parent = File::query()->where('id', $this->input('parent_id'))->first();
         if ($this->parent && !$this->parent->isOwnedBy(Auth::id())) {
             return false;
