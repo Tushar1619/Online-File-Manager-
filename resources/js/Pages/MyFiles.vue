@@ -53,11 +53,32 @@
           </div>
         </li>
       </ol>
+      <div>
+        <DownloadFilesButton
+          :all="allSelected"
+          :ids="selectedIds"
+          @download="onChange"
+          class="mr-2"
+        />
+        <DeleteFilesButton
+          :delete-all="allSelected"
+          :delete-ids="selectedIds"
+          @delete="onChange"
+        />
+      </div>
     </nav>
     <div class="flex-1 overflow-auto">
       <table class="min-w-full">
         <thead class="bg-gray-100 border-b">
           <tr>
+            <th
+              class="text-sm font-medium text-gray-900 px-6 py-4 text-left w-[30px] max-w-[30px] pr-0"
+            >
+              <Checkbox
+                @change="onSelectAllChange"
+                v-model:checked="allSelected"
+              />
+            </th>
             <th class="text-sm font-medium text-gray-900 px-6 py-4 text-left">
               Name
             </th>
@@ -77,8 +98,22 @@
             v-for="file of allFiles.data"
             :key="file.id"
             @dblclick="openFolder(file)"
-            class="bg-white border-b transition duration-300 ease-in-out hover:bg-gray-100 cursor-pointer"
+            class="border-b transition duration-300 ease-in-out hover:bg-gray-100 cursor-pointer"
+            @click="($event) => toggleFileSelect(file)"
+            :class="
+              selected[file.id] || allSelected ? 'bg-blue-50' : 'bg-white'
+            "
           >
+            <!-- Added at 5:35 -->
+            <td
+              class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-[30px] max-w-[30px] pr-0"
+            >
+              <Checkbox
+                @change="($event) => onSelectCheckboxChange(file)"
+                v-model="selected[file.id]"
+                :checked="selected[file.id] || allSelected"
+              />
+            </td>
             <td
               class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
             >
@@ -116,13 +151,16 @@
 </template>
 
 <script setup>
+import Checkbox from "@/Components/Checkbox.vue";
+import DeleteFilesButton from "@/Components/app/DeleteFilesButton.vue";
+import DownloadFilesButton from "@/Components/app/DownloadFilesButton.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { router, Link } from "@inertiajs/vue3";
 import FileIcon from "@/Components/app/FileIcon.vue";
 import { onMounted, onUpdated, ref } from "vue";
 import { httpGet } from "@/Helper/http-helper.js";
+import { computed } from "vue";
 const loadMoreIntersect = ref(null);
-
 const props = defineProps({
   files: Object,
   folder: Object,
@@ -141,33 +179,90 @@ function openFolder(file) {
   router.visit(route("myFiles", { folder: file.path }));
 }
 
-  function loadMore() {
-    if (allFiles.value.next === null) {
-      return;
-    }
-
-    httpGet(allFiles.value.next).then((res) => {
-      allFiles.value.data = [...allFiles.value.data, ...res.data];
-      allFiles.value.next = res.links.next;
-    });
+function loadMore() {
+  if (allFiles.value.next === null) {
+    return;
   }
 
-  onUpdated(() => {
-    allFiles.value = {
-      data: props.files.data,
-      next: props.files.links.next,
-    };
+  httpGet(allFiles.value.next).then((res) => {
+    allFiles.value.data = [...allFiles.value.data, ...res.data];
+    allFiles.value.next = res.links.next;
   });
+}
 
-  onMounted(() => {
-    const observer = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((entry) => entry.isIntersecting && loadMore()),
-      {
-        rootMargin: "-250px 0px 0px 0px",
-      }
-    );
+onUpdated(() => {
+  allFiles.value = {
+    data: props.files.data,
+    next: props.files.links.next,
+  };
+});
 
-    observer.observe(loadMoreIntersect.value);
-  });
+onMounted(() => {
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach((entry) => entry.isIntersecting && loadMore()),
+    {
+      rootMargin: "-250px 0px 0px 0px",
+    }
+  );
+
+  observer.observe(loadMoreIntersect.value);
+});
+
+const allSelected = ref(false);
+const selected = ref({});
+
+function onSelectAllChange() {
+    //using allFiles which is defined in previous portion of the video
+    allFiles.value.data.forEach((f) => {
+        selected.value[f.id] = allSelected.value;
+    });
+}
+
+function toggleFileSelect(file) {
+    selected[file.id] = !selected.value[file.id];
+    onSelectCheckboxChange(file);
+}
+
+function onSelectCheckboxChange(file) {
+    if (!selected.value[file.id]) {
+        allSelected.value = false;
+    } else {
+        let checked = true;
+
+        for (let file of allFiles.value.data) {
+            if (!selected.value[file.id]) {
+                checked = false;
+                break;
+            }
+        }
+
+        allSelected.value = checked;
+    }
+}
+
+// {
+//     '1' => 'true',
+//     '2' => 'false',
+// }
+
+// tthe below code converts the objects into this array and
+// also filters the values which are false
+
+// [
+//     [1,'true'], => 1
+//     [2,'false']
+// ]
+
+const selectedIds = computed(() =>
+    Object.entries(selected.value)
+        .filter((a) => a[1])
+        .map((a) => a[0])
+);
+
+function onChange() {
+    allSelected.value = false;
+    selected.value = [];
+}
+
+
 </script>
