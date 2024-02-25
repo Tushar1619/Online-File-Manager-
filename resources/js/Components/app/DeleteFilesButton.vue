@@ -25,8 +25,7 @@
     message="Are you sure you want to delete selected files?"
     @cancel="onDeleteCancel"
     @confirm="onDeleteConfirm"
-  >
-  </ConfirmationDialog>
+  />
 </template>
 
 <script setup>
