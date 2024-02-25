@@ -7,7 +7,7 @@
       @drop.prevent="handleDrop"
       @dragover.prevent="onDragOver"
       @dragleave.prevent="onDragLeave"
-      class="flex flex-col flex-1 px-4 overflow-hidden"
+      class="flex flex-col flex-1 px-4 "
       :class="dragOver ? 'dropzone' : ''"
     >
       <div v-if="dragOver" class="text-gray-500 text-center py-8 text-sm">
@@ -18,11 +18,12 @@
           <SearchForm></SearchForm>
           <UserSettingsDropdown></UserSettingsDropdown>
         </div>
-        <div class="flex-1 flex flex-col overflow-hidden">
+        <div class="flex-1 flex flex-col ">
           <slot></slot>
         </div>
       </div>
     </main>
+    <FormProgress :form="fileUploadForm" />
   </div>
 </template>   
 
@@ -34,10 +35,11 @@ import SearchForm from "../Components/app/SearchForm.vue";
 import UserSettingsDropdown from "../Components/app/UserSettingsDropdown.vue";
 import { emitter, FILE_UPLOAD_STARTED } from "@/event-bus.js";
 import { useForm, usePage } from "@inertiajs/vue3";
+import FormProgress from "@/Components/app/FormProgress.vue";
 const page = usePage();
 const fileUploadForm = useForm({
   files: [],
-  relative_paths:[],
+  relative_paths: [],
   parent_id: null,
 });
 
@@ -62,11 +64,10 @@ function handleDrop(ev) {
 }
 
 function uploadFiles(files) {
-
-    fileUploadForm.parent_id = page.props.folder.data.id;
-    fileUploadForm.files = files;
-    fileUploadForm.relative_paths = [...files].map(f=>f.webkitRelativePath);
-    fileUploadForm.post(route('file.store'));
+  fileUploadForm.parent_id = page.props.folder.data.id;
+  fileUploadForm.files = files;
+  fileUploadForm.relative_paths = [...files].map((f) => f.webkitRelativePath);
+  fileUploadForm.post(route("file.store"));
 }
 
 onMounted(() => {
