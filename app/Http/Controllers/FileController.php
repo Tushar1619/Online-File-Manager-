@@ -1,22 +1,24 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\FilesActionRequest;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use App\Http\Requests\StoreFileRequest;
 use App\Http\Requests\StoreFolderRequest;
 use App\Http\Resources\FileResource;
 use App\Models\File;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Kalnoy\Nestedset\NodeTrait;
-use Illuminate\Http\Request;
+use ZipArchive;
 
 class FileController extends Controller
 {
     use NodeTrait;
-    public function myFiles(Request $request,string $folder = null)
+    public function myFiles(Request $request, string $folder = null)
     {
         if ($folder) {
             $folder = File::query()
@@ -39,8 +41,8 @@ class FileController extends Controller
             ->paginate(5);
 
         $files = FileResource::collection($files);
-        
-        if($request->wantsJson()){
+
+        if ($request->wantsJson()) {
             return $files;
         }
 
@@ -88,7 +90,7 @@ class FileController extends Controller
             foreach ($data['files'] as $file) {
                 /** @var \Illuminate\Http\UploadedFile $file */
 
-                               $this->saveFile($file, $user, $parent);
+                $this->saveFile($file, $user, $parent);
             }
         }
     }
@@ -209,25 +211,23 @@ class FileController extends Controller
         ];
     }
 
-    //i'm assuming that these errors are caused by the absent content from
-    //previous part of the video
-    public function createZip($files): string
+    private function createZip($files): string
     {
+        // Path to the output ZIP file
         $zipPath = 'zip/' . Str::random() . '.zip';
         $publicPath = "public/$zipPath";
 
         if (!is_dir(dirname($publicPath))) {
-            Storage::disk('public')->makeDirectory(dirname($publicPath));
+            Storage::makeDirectory(dirname($publicPath));
         }
-
         $zipFile = Storage::path($publicPath);
 
-        $zip = new \ZipArchive();
-
-        if ($zip->open($zipFile, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
+        $zip = new ZipArchive();
+        if ($zip->open($zipFile, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
             $this->addFilesToZip($zip, $files);
         }
 
+        // Close the ZIP archive
         $zip->close();
 
         return asset(Storage::url($zipPath));
