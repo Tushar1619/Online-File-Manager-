@@ -32,6 +32,18 @@ class File extends Model
         return $this->parent_id == null;
     }
 
+    //calculating the size of the files in a readable format.
+    public function get_file_size()
+    {
+        // lets say the size = 5000B
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        // (log(5000, 1024)) = 1.2 , floor would be 1 
+        $power = $this->size > 0 ? floor(log($this->size, 1024)) : 0;
+        // $power = 1
+        // return number_format(5000/1024) 2 places after decimal + KB
+        return number_format($this->size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
+        // . is decimal seperator , is thousand seperator
+    }
     //setting the value of the owner
     public function owner(): Attribute
     {
