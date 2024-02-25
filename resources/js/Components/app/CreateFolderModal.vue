@@ -67,7 +67,7 @@ const { modelValue } = defineProps({
 
 function createFolder() {
     //getting value of id
-    form.parent_id = page.props.folder.id;
+    form.parent_id = page.props.folder.data.id;
     //used  to send a post request
     form.post(route("folder.create"), {
         preserveScroll: true,
