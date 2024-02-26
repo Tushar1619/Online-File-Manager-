@@ -52,6 +52,11 @@ Route::controller(FileController::class)
         Route::post('/file/share', 'share')->name('file.share');
         Route::get('/file/download', 'download')->name('file.download');
 
+        Route::get('/shared-with-me', 'sharedWithMe')->name('file.sharedWithMe');
+        Route::get('/shared-by-me', 'sharedByMe')->name('file.sharedByMe');
+        Route::get('/file/download-shared-with-me', 'downloadSharedWithMe')->name('file.downloadSharedWithMe');
+        Route::get('/file/download-shared-by-me', 'downloadSharedByMe')->name('file.downloadSharedByMe');
+
     });
 
 Route::get('/dashboard', function () {

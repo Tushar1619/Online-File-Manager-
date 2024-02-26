@@ -36,6 +36,8 @@ const props = defineProps({
         type: Array,
         required: false,
     },
+    sharedWithMe: false,
+    sharedByMe: false,
 });
 
 const emit = defineEmits(["download"]);
@@ -47,8 +49,11 @@ function download() {
     }
 
     const p = new URLSearchParams();
+
     //used .data.id instead of .id
-    p.append("parent_id", page.props.folder.data.id);
+    if (page.props.folder?.data.id) {
+        p.append("parent_id", page.props.folder.data.id);
+    }
     if (props.all) {
         p.append("all", props.all ? 1 : 0);
     } else {
@@ -57,7 +62,14 @@ function download() {
         }
     }
 
-    httpGet(route("file.download") + "?" + p.toString()).then((res) => {
+    let url = route("file.download");
+    if (props.sharedWithMe) {
+        url = route("file.downloadSharedWithMe");
+    } else if (props.sharedByMe) {
+        url = route("file.downloadSharedByMe");
+    }
+
+    httpGet(url + "?" + p.toString()).then((res) => {
         console.log(res);
         if (!res.url) return;
 
