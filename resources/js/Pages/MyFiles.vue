@@ -88,6 +88,12 @@
                             Name
                         </th>
                         <th
+                            v-if="search"
+                            class="text-sm font-medium text-gray-900 px-6 py-4 text-left"
+                        >
+                            Path
+                        </th>
+                        <th
                             class="text-sm font-medium text-gray-900 px-6 py-4 text-left"
                         >
                             Owner
@@ -136,6 +142,12 @@
                             {{ file.name }}
                         </td>
                         <td
+                            v-if="search"
+                            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                        >
+                            {{ file.path }}
+                        </td>
+                        <td
                             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
                         >
                             {{ file.owner }}
@@ -173,9 +185,14 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import { router, Link } from "@inertiajs/vue3";
 import FileIcon from "@/Components/app/FileIcon.vue";
 import { onMounted, onUpdated, ref } from "vue";
+import { emitter, ON_SEARCH, showSuccessNotification } from "@/event-bus.js";
 import { httpGet } from "@/Helper/http-helper.js";
 import { computed } from "vue";
 import ShareFilesButton from "@/Components/app/ShareFilesButton.vue";
+
+const search = ref("");
+let params = "";
+
 const loadMoreIntersect = ref(null);
 const props = defineProps({
     files: Object,
@@ -214,6 +231,12 @@ onUpdated(() => {
 });
 
 onMounted(() => {
+    params = new URLSearchParams(window.location.search);
+    search.value = params.get("search");
+    emitter.on(ON_SEARCH, (value) => {
+        search.value = value;
+    });
+
     const observer = new IntersectionObserver(
         (entries) =>
             entries.forEach((entry) => entry.isIntersecting && loadMore()),
