@@ -42,6 +42,7 @@ const emit = defineEmits(["download"]);
 
 function download() {
     if (!props.all && props.ids.length == 0) {
+        alert("Please select at least one file to download");
         return;
     }
 

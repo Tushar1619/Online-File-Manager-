@@ -1,36 +1,37 @@
 <template>
-    <Modal :show="modelValue" @show="onShow" max-width="sm">
+    <Modal :show="props.modelValue" @show="onShow" max-width="sm">
         <div class="p-6">
-            <h2 class="text-lg font-medium text-gray-900">Create New Folder</h2>
+            <h2 class="text-lg font-medium text-gray-900">Share Files</h2>
             <div class="mt-6">
                 <InputLabel
-                    for="folderName"
-                    value="Folder Name"
+                    for="shareEmail"
+                    value="Enter Email Address"
                     class="sr-only"
                 />
 
                 <TextInput
                     type="text"
-                    ref="folderNameInput"
-                    id="folderName"
-                    v-model="form.name"
+                    ref="emailInput"
+                    id="shareEmail"
+                    v-model="form.email"
                     class="mt-1 block w-full"
                     :class="
-                        form.errors.name
+                        form.errors.email
                             ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
                             : ''
                     "
-                    placeholder="Folder Name"
-                    @keyup.enter="createFolder"
+                    placeholder="Enter Email Address"
+                    @keyup.enter="share"
                 />
-                <InputError :message="form.errors.name" class="mt-2" />
+
+                <InputError :message="form.errors.email" class="mt-2" />
             </div>
             <div class="mt-6 flex justify-end">
                 <SecondaryButton @click="closeModal">Cancel</SecondaryButton>
                 <PrimaryButton
                     class="ml-3"
                     :class="{ 'opacity-25': form.processing }"
-                    @click="createFolder"
+                    @click="share"
                     :disable="form.processing"
                 >
                     Submit
@@ -51,39 +52,54 @@ import PrimaryButton from "../PrimaryButton.vue";
 import { nextTick, ref } from "vue";
 import { showSuccessNotification } from "@/event-bus";
 
-const folderNameInput = ref(null);
+const emailInput = ref(null);
 const page = usePage();
 
 const form = useForm({
-    name: "",
+    email: null,
+    all: false,
+    ids: [],
     parent_id: null,
 });
 
 const emit = defineEmits(["update:modelValue"]);
 
-const { modelValue } = defineProps({
+const props = defineProps({
     modelValue: Boolean,
+    allSelected: Boolean,
+    selectedIds: Array,
 });
 
-function createFolder() {
+function share() {
     //getting value of id
     form.parent_id = page.props.folder.data.id;
-    const name = form.name;
+
+    if (props.allSelected) {
+        form.all = true;
+        form.ids = [];
+    } else {
+        form.ids = props.selectedIds;
+    }
+
+    const email = form.email;
+
     //used  to send a post request
-    form.post(route("folder.create"), {
+    form.post(route("file.share"), {
         preserveScroll: true,
         onSuccess: () => {
             closeModal();
-            //show success notification
-            showSuccessNotification(`The folder "${name}" was created`);
             form.reset();
+            //show success notification
+            showSuccessNotification(
+                `Selected files will be shared to "${email}" if the email exists in the system`
+            );
         },
-        onError: () => folderNameInput.value.focus(),
+        onError: () => emailInput.value.focus(),
     });
 }
 
 function onShow() {
-    nextTick(() => folderNameInput.value.focus());
+    nextTick(() => emailInput.value.focus());
 }
 
 function closeModal() {

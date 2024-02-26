@@ -19,11 +19,21 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
+        'canLogin' => true,
+        'canRegister' => true,
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/register', function () {
+        return Inertia::render('register');
+    })->name('register');
+    Route::get('/login', function () {
+        return Inertia::render('login')
+            ->name('login');
+    });
 });
 
 //Adding route to the FileController
@@ -32,10 +42,14 @@ Route::controller(FileController::class)
     ->group(function () {
         Route::get('/my-files/{folder?}', 'myFiles')
             ->where('folder', '(.*)')->name('myFiles');
+        Route::get('/trash', 'trash')->name('trash');
         Route::post('/folder/create', 'createFolder')->name('folder.create');
-        Route::post('/file','store')->name('file.store');
+        Route::post('/file', 'store')->name('file.store');
 
         Route::delete('/file', 'destroy')->name('file.delete');
+        Route::post('/file/restore', 'restore')->name('file.restore');
+        Route::delete('/file/delete-forever', 'deleteForever')->name('file.deleteForever');
+        Route::post('/file/share', 'share')->name('file.share');
         Route::get('/file/download', 'download')->name('file.download');
 
     });

@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Traits\HasCreatorAndUpdater;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Kalnoy\Nestedset\NodeTrait;
 
@@ -37,7 +40,7 @@ class File extends Model
     {
         // lets say the size = 5000B
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-        // (log(5000, 1024)) = 1.2 , floor would be 1 
+        // (log(5000, 1024)) = 1.2 , floor would be 1
         $power = $this->size > 0 ? floor(log($this->size, 1024)) : 0;
         // $power = 1
         // return number_format(5000/1024) 2 places after decimal + KB
@@ -77,6 +80,29 @@ class File extends Model
         //     }
         // }));
         //this permanently deletes files from storage
+    }
 
+    public function moveToTrash(): bool
+    {
+        $this->deleted_at = Carbon::now();
+        return $this->save();
+    }
+
+    public function deleteForever()
+    {
+        $this->deleteFilesFromStorage([$this]);
+        $this->forceDelete();
+    }
+
+    private static function deleteFilesFromStorage($files)
+    {
+        foreach ($files as $file) {
+            if ($file->is_folder) {
+                self::deleteFilesFromStorage($file->children);
+            } else {
+                Log::error("Deleting file from storage " . $file->storagePath);
+                Storage::delete($file->storage_path);
+            }
+        }
     }
 }
