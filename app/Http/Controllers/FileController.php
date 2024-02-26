@@ -28,7 +28,7 @@ class FileController extends Controller
     use NodeTrait;
     public function myFiles(Request $request, string $folder = null)
     {
-        $search = $request->get('search'); //t
+        // $search = $request->get('search'); //t
 
         if ($folder) {
             $folder = File::query()
@@ -44,18 +44,18 @@ class FileController extends Controller
         //we are trying to get the root of the folder
 
         $files = File::query()
-        // ->where('parent_id', $folder->id)
+            ->where('parent_id', $folder->id)
             ->where('created_by', Auth::id())
-            ->where('_lft', '!=', 1)
+            // ->where('_lft', '!=', 1)
             ->orderBy('is_folder', 'desc')
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        if ($search) {
-            $files->where('name', 'like', '%$search%');
-        } else {
-            $files->where('parent_id', $folder->id);
-        } //t
+        // if ($search) {
+        //     $files->where('name', 'like', '%$search%');
+        // } else {
+        //     $files->where('parent_id', $folder->id);
+        // } //t
 
         // dd($files);
 
