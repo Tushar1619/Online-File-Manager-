@@ -10,8 +10,7 @@
                     <Link
                         v-if="!ans.parent_id"
                         :href="route('myFiles')"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white"
-                    >
+                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -190,8 +189,8 @@ import { httpGet } from "@/Helper/http-helper.js";
 import { computed } from "vue";
 import ShareFilesButton from "@/Components/app/ShareFilesButton.vue";
 
-const search = ref("");
-let params = "";
+let search = ref('');
+let params = null;
 
 const loadMoreIntersect = ref(null);
 const props = defineProps({

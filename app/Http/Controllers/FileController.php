@@ -28,7 +28,7 @@ class FileController extends Controller
     use NodeTrait;
     public function myFiles(Request $request, string $folder = null)
     {
-        // $search = $request->get('search'); //t
+        $search = $request->get('search'); // getting the search query parameter from url
 
         if ($folder) {
             $folder = File::query()
@@ -44,20 +44,27 @@ class FileController extends Controller
         //we are trying to get the root of the folder
 
         $files = File::query()
-            ->where('parent_id', $folder->id)
+            // ->where('parent_id', $folder->id) 
+            /**
+             * we need to fetch all the files present in current page and
+             * as well as the files present in the child folders in depth in the same
+             * page that matches the search name.
+             * So we need to disable the above query that limits the search to current folder.
+             * 
+             */
             ->where('created_by', Auth::id())
-            // ->where('_lft', '!=', 1)
+            ->whereNot('name', 'like', '%@%')
             ->orderBy('is_folder', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->orderBy('created_at', 'desc');
 
-        // if ($search) {
-        //     $files->where('name', 'like', '%$search%');
-        // } else {
-        //     $files->where('parent_id', $folder->id);
-        // } //t
+        if ($search) {
+            $files->where('name', 'like', "%$search%");
+        } else {
+            $files->where('parent_id', $folder->id); // fetching files from current folder if not searched
+        } 
 
         // dd($files);
+        $files = $files->paginate(10);
 
         $files = FileResource::collection($files);
 
@@ -74,11 +81,18 @@ class FileController extends Controller
 
     public function trash(Request $request)
     {
+        $search = $request->get('search');
+
         $files = File::onlyTrashed()
             ->where('created_by', Auth::id())
             ->orderBy('is_folder', 'desc')
-            ->orderBy('deleted_at', 'desc')
-            ->paginate(10);
+            ->orderBy('deleted_at', 'desc');
+        
+        if($search) {
+            $files->where('name', 'like', "%$search%");
+        }
+
+        $files = $files->paginate(10);
 
         $files = FileResource::collection($files);
 
@@ -361,7 +375,7 @@ class FileController extends Controller
         $query = File::getSharedWithMe();
 
         if ($search) {
-            $query->where('name', 'like', '%$search%');
+            $query->where('name', 'like', "%$search%");
         }
 
         $files = $query->paginate(10);
@@ -383,7 +397,7 @@ class FileController extends Controller
         $query = File::getSharedByMe();
 
         if ($search) {
-            $query->where('name', 'like', '%$search%');
+            $query->where('name', 'like', "%$search%");
         }
 
         $files = $query->paginate(10);
