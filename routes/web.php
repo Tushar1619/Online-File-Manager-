@@ -37,9 +37,12 @@ Route::middleware('auth')->group(function () {
 });
 
 //Adding route to the FileController
+// the auth checks for authentication and verified checks for email is verified or not
 Route::controller(FileController::class)
+
     ->middleware(['auth', 'verified'])
     ->group(function () {
+         // the below routes shows that folder is an optional parameter /my-files and /my-files/folder1 both works
         Route::get('/my-files/{folder?}', 'myFiles')
             ->where('folder', '(.*)')->name('myFiles');
         Route::get('/trash', 'trash')->name('trash');

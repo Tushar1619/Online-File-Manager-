@@ -7,7 +7,7 @@
             <ApplicationLogo
                 class="block h-9 w-auto fill-current text-gray-800"
             />
-            LaraStorage
+            RCRM Storage
         </Link>
 
         <div class="px-3">
