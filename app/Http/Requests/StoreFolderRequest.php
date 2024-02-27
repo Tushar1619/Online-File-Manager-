@@ -17,6 +17,7 @@ class StoreFolderRequest extends ParentIdBaseRequest
      */
     public function rules(): array
     {
+       
         return array_merge(parent::rules(),
             [
                 'name' => [
@@ -28,6 +29,7 @@ class StoreFolderRequest extends ParentIdBaseRequest
                 ],
             ]);
     }
+    
 
     //customizing the messages
     public function messages()
