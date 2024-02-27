@@ -18,19 +18,20 @@ import { router, useForm } from "@inertiajs/vue3";
 import { ref, onMounted } from "vue";
 import { ON_SEARCH, emitter } from "@/event-bus";
 
-let params = "";
-
-const search = ref("");
+let params = '';
+const search = ref('');
 
 function onSearch() {
-    params.set("search", search.value);
-    router.get(window.location.pathname + "?" + params.toString());
 
+    params.set('search', search.value);
+    router.get(window.location.pathname + '?' + params.toString());
+    
     emitter.emit(ON_SEARCH, search.value);
+    
 }
 
 onMounted(() => {
     params = new URLSearchParams(window.location.search);
-    search.value = params.get("search");
+    search.value = params.get('search');
 });
 </script>
