@@ -5,6 +5,8 @@ namespace App\Http\Requests;
 use App\Models\File;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
+
 
 class StoreFileRequest extends ParentIdBaseRequest
 {
@@ -40,7 +42,6 @@ class StoreFileRequest extends ParentIdBaseRequest
                 'required',
                 'file',
                 function ($attribute, $value, $fail) {
-
                     /** @var $value \Illuminate\Http\UploadedFile */
                     $file = File::query()->where('name', $value->getClientOriginalName())
                         ->where('created_by', Auth::id())

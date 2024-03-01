@@ -1,13 +1,12 @@
 <template>
     <div class="h-screen bg-gray-50 flex w-full gap-4">
         <Navigation></Navigation>
-
         <main
-            @drop.prevent="handleDrop"
-            @dragover.prevent="onDragOver"
-            @dragleave.prevent="onDragLeave"
-            class="flex flex-col flex-1 px-4"
-            :class="dragOver ? 'dropzone' : ''"
+        @drop.prevent="handleDrop"
+        @dragover.prevent="onDragOver"
+        @dragleave.prevent="onDragLeave"
+        class="flex flex-col flex-1 px-4"
+        :class="dragOver ? 'dropzone' : ''"
         >
             <div v-if="dragOver" class="text-gray-500 text-center py-8 text-sm">
                 Drop files here to upload
@@ -60,6 +59,7 @@ function onDragLeave() {
 function handleDrop(ev) {
     dragOver.value = false;
     const files = ev.dataTransfer.files;
+    console.log(files);
     if (!files.length) {
         return;
     }

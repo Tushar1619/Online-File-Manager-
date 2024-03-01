@@ -61,7 +61,7 @@ class FileController extends Controller
             $files->where('name', 'like', "%$search%");
         } else {
             $files->where('parent_id', $folder->id); // fetching files from current folder if not searched
-        } 
+        }
 
         // dd($files);
         $files = $files->paginate(10);
@@ -87,8 +87,8 @@ class FileController extends Controller
             ->where('created_by', Auth::id())
             ->orderBy('is_folder', 'desc')
             ->orderBy('deleted_at', 'desc');
-        
-        if($search) {
+
+        if ($search) {
             $files->where('name', 'like', "%$search%");
         }
 
@@ -105,13 +105,13 @@ class FileController extends Controller
 
     public function createFolder(StoreFolderRequest $request)
     {
+        // dd($request);
         $data = $request->validated();
         $parent = $request->parent;
 
         if (!$parent) {
             $parent = $this->getRoot();
         }
-
         $file = new File();
         $file->is_folder = 1;
         $file->name = $data['name'];
@@ -125,6 +125,7 @@ class FileController extends Controller
 
     public function store(StoreFileRequest $request)
     {
+        // dd($request);
         $data = $request->validated();
         $parent = $request->parent;
         $user = $request->user();
@@ -180,7 +181,6 @@ class FileController extends Controller
         $model->size = $file->getSize();
 
         $parent->appendNode($model);
-
     }
 
     //deleting functionality
@@ -387,7 +387,6 @@ class FileController extends Controller
         }
 
         return Inertia::render('SharedWithMe', compact('files'));
-
     }
 
     public function sharedByMe(Request $request)
@@ -409,7 +408,6 @@ class FileController extends Controller
         }
 
         return Inertia::render('SharedByMe', compact('files'));
-
     }
 
     public function downloadSharedWithMe(FilesActionRequest $request)
