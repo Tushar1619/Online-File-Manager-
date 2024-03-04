@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link } from "@inertiajs/vue3";
-
+import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+import PirmaryButtom from "@/Components/PrimaryButton.vue";
 defineProps({
   canLogin: {
     type: Boolean,
@@ -20,31 +21,61 @@ defineProps({
 </script>
 
 <template>
-  <div
-    class="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-dots-darker bg-center bg-gray-100 dark:bg-dots-lighter dark:bg-gray-900 selection:bg-red-500 selection:text-white"
-  >
-    <div v-if="canLogin" class="sm:fixed sm:top-0 sm:right-0 p-6 text-end">
-      <Link
-        v-if="$page.props.auth.user"
-        :href="route('dashboard')"
-        class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-        >Dashboard</Link
-      >
+  <div class="min-h-screen bg-dots-darker bg-center bg-gray-100">
+    <div class="flex justify-between p-6">
+      <div>
+        <ApplicationLogo />
+        RCRM
+      </div>
 
-      <template v-else>
+      <div v-if="canLogin" class="">
         <Link
-          :href="route('login')"
-          class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-          >Log in</Link
+          v-if="$page.props.auth.user"
+          :href="route('dashboard')"
+          class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-black focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+          >Dashboard</Link
         >
 
-        <Link
-          v-if="canRegister"
-          :href="route('register')"
-          class="ms-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
-          >Register</Link
+        <template v-else>
+          <Link
+            :href="route('login')"
+            class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-black focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+            >Log in</Link
+          >
+
+          <Link
+            v-if="canRegister"
+            :href="route('register')"
+            class="ms-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-black focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500"
+            >Register</Link
+          >
+        </template>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl">
+          Welcome to RCRM Storage
+        </h1>
+        <p class="mt-4 text-lg text-gray-600">
+          Store, share, and collaborate on files and folders from your mobile
+          device, tablet, or computer
+        </p>
+        <div class="mt-6">
+          <p
+            class="text-base font-medium text-indigo-600 hover:text-indigo-500"
+          >
+            We are delighted to have you here!
+          </p>
+        </div>
+        <PirmaryButtom
+          class="inline-flex items-center mt-10 py-5 px-8 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
         >
-      </template>
+          <Link  :href="canRegister ? route('register'):route('dashboard')" class="">
+            Get Started
+          </Link>
+        </PirmaryButtom>
+      </div>
     </div>
   </div>
 </template>
