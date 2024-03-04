@@ -121,7 +121,7 @@
                         v-for="file of allFiles.data"
                         :key="file.id"
                         @dblclick="openFolder(file)"
-                        class="border-b transition duration-300 ease-in-out hover:bg-gray-100 cursor-pointer"
+                        class="border-b transition duration-300 ease-in-out hover:bg-blue-100 cursor-pointer"
                         @click="($event) => toggleFileSelect(file)"
                         :class="
                             selected[file.id] || allSelected
@@ -166,7 +166,8 @@
                         <td
                             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
                         >
-                            {{ file.size }}
+                            <div v-if="!file.is_folder">{{ file.size }}</div>
+                            <div v-else>{{ file.folder_size }}</div>
                         </td>
                         <td
                             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
@@ -174,10 +175,14 @@
                             <ViewFilesButton
                                 v-if="
                                     file.is_folder != 1 &&
-                                    (file.mime == 'image/png' ||
-                                        file.mime == 'application/pdf')
+                                    (file.mime.includes('image') ||
+                                        file.mime.includes('pdf') ||
+                                        file.mime.includes('text') ||
+                                        file.mime.includes('video') ||
+                                        file.mime.includes('audio'))
                                 "
                                 :file="file"
+                                @close="toggleFileSelect(file)"
                             />
                         </td>
                     </tr>
@@ -278,7 +283,7 @@ function onSelectAllChange() {
 }
 
 function toggleFileSelect(file) {
-    selected[file.id] = !selected.value[file.id];
+    selected.value[file.id] = !selected.value[file.id];
     onSelectCheckboxChange(file);
 }
 
