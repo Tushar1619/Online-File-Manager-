@@ -44,14 +44,14 @@ class FileController extends Controller
         //we are trying to get the root of the folder
 
         $files = File::query()
-            // ->where('parent_id', $folder->id) 
-            /**
-             * we need to fetch all the files present in current page and
-             * as well as the files present in the child folders in depth in the same
-             * page that matches the search name.
-             * So we need to disable the above query that limits the search to current folder.
-             * 
-             */
+        // ->where('parent_id', $folder->id)
+        /**
+         * we need to fetch all the files present in current page and
+         * as well as the files present in the child folders in depth in the same
+         * page that matches the search name.
+         * So we need to disable the above query that limits the search to current folder.
+         *
+         */
             ->where('created_by', Auth::id())
             ->whereNot('name', 'like', '%@%')
             ->orderBy('is_folder', 'desc')
@@ -63,7 +63,6 @@ class FileController extends Controller
             $files->where('parent_id', $folder->id); // fetching files from current folder if not searched
         }
 
-        // dd($files);
         $files = $files->paginate(10);
 
         $files = FileResource::collection($files);
@@ -497,5 +496,16 @@ class FileController extends Controller
         }
 
         return [$url, $filename];
+    }
+
+    public function show(Request $request)
+    {
+        $dest = 'public/' . pathinfo($request->filepath, PATHINFO_BASENAME);
+        Storage::copy($request->filepath, $dest);
+
+        $url = asset(Storage::url($dest));
+        return [
+            "path" => $url,
+        ];
     }
 }
