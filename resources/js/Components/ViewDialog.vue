@@ -64,8 +64,9 @@ const emit = defineEmits(["close"]);
 </script>
 
 <style scoped>
-video {
-    border-radius: 30px;
+video,
+img {
+    border-radius: 20px;
 }
 audio::-webkit-media-controls-panel {
     background-color: #cae5ff;
