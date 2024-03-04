@@ -42,7 +42,7 @@ Route::controller(FileController::class)
 
     ->middleware(['auth', 'verified'])
     ->group(function () {
-         // the below routes shows that folder is an optional parameter /my-files and /my-files/folder1 both works
+        // the below routes shows that folder is an optional parameter /my-files and /my-files/folder1 both works
         Route::get('/my-files/{folder?}', 'myFiles')
             ->where('folder', '(.*)')->name('myFiles');
         Route::get('/trash', 'trash')->name('trash');
@@ -54,6 +54,8 @@ Route::controller(FileController::class)
         Route::delete('/file/delete-forever', 'deleteForever')->name('file.deleteForever');
         Route::post('/file/share', 'share')->name('file.share');
         Route::get('/file/download', 'download')->name('file.download');
+
+        Route::get('/file/show', 'show')->name('file.show');
 
         Route::get('/shared-with-me', 'sharedWithMe')->name('file.sharedWithMe');
         Route::get('/shared-by-me', 'sharedByMe')->name('file.sharedByMe');

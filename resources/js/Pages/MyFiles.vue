@@ -10,7 +10,8 @@
                     <Link
                         v-if="!ans.parent_id"
                         :href="route('myFiles')"
-                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+                        class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600"
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"
@@ -44,7 +45,10 @@
                         </svg>
                         <Link
                             :href="route('myFiles', { folder: ans.path })"
-                            class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 "
+
+                            class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2"
+                        
+
                         >
                             {{ ans.name }}
                         </Link>
@@ -107,6 +111,9 @@
                         >
                             Size
                         </th>
+                        <th
+                            class="text-sm font-medium text-gray-900 px-6 py-4 text-left"
+                        ></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -161,6 +168,18 @@
                         >
                             {{ file.size }}
                         </td>
+                        <td
+                            class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                        >
+                            <ViewFilesButton
+                                v-if="
+                                    file.is_folder != 1 &&
+                                    (file.mime == 'image/png' ||
+                                        file.mime == 'application/pdf')
+                                "
+                                :file="file"
+                            />
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -188,8 +207,9 @@ import { emitter, ON_SEARCH, showSuccessNotification } from "@/event-bus.js";
 import { httpGet } from "@/Helper/http-helper.js";
 import { computed } from "vue";
 import ShareFilesButton from "@/Components/app/ShareFilesButton.vue";
+import ViewFilesButton from "@/Components/app/ViewFilesButton.vue";
 
-let search = ref('');
+let search = ref("");
 let params = null;
 
 const loadMoreIntersect = ref(null);
