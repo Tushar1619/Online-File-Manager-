@@ -50,23 +50,26 @@ class File extends Model
 
     public function get_folder_size($file)
     {
-        if (!$file->is_folder) {
-            return $file->size;
-        }
-        $size = 0;
-        foreach ($file->children as $child) {
-            if ($child->is_folder) {
-                $size += (float) self::get_folder_size($child);
-            } else {
-                $size += $child->size;
-            }
-        }
+        $size = self::get_size($file);
 
         $units = ['B', 'KB', 'MB', 'GB', 'TB'];
         $power = $size > 0 ? floor(log($size, 1024)) : 0;
         return number_format($size / pow(1024, $power), 2, '.', ',') . ' ' . $units[$power];
 
         // return $size;
+    }
+
+    private function get_size($file)
+    {
+        $size = 0;
+        foreach ($file->children as $child) {
+            if ($child->is_folder) {
+                $size += (float) self::get_size($child);
+            } else {
+                $size += $child->size;
+            }
+        }
+        return $size;
     }
 
     //setting the value of the owner
