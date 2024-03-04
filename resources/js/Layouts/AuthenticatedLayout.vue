@@ -59,7 +59,6 @@ function onDragLeave() {
 function handleDrop(ev) {
     dragOver.value = false;
     const files = ev.dataTransfer.files;
-    console.log(files);
     if (!files.length) {
         return;
     }
@@ -68,6 +67,8 @@ function handleDrop(ev) {
 }
 
 function uploadFiles(files) {
+    // const res = [...files];
+    // console.log(res);
     fileUploadForm.parent_id = page.props.folder?.data.id;
     fileUploadForm.files = files;
     fileUploadForm.relative_paths = [...files].map((f) => f.webkitRelativePath);
