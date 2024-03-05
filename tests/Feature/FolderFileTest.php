@@ -2,10 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\FileController;
 use App\Models\File;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -41,25 +43,25 @@ class FolderFileTest extends TestCase
         $this->actingAs($user = User::factory()->create(), 'web');
 
         $parentFolder = File::factory()->create(['is_folder' => true]);
-
         // Create some dummy file data
         $fileData = [
-            File::factory()->create(['name'=>'file1.txt','is_folder'=>false,'parent_id'=>$parentFolder->id]), // Example uploaded file
-            File::factory()->create(['name'=>'file2.txt','is_folder'=>false,'parent_id'=>$parentFolder->id]), // Example uploaded file
+            UploadedFile::fake()->create('file1.txt', 100), // Example uploaded file
+            UploadedFile::fake()->create('file2.txt', 200), // Example uploaded file
         ];
 
         // Mock the request data
         $requestData = [
             'files' => $fileData,
             'file_tree' => [], // Assuming no file tree data for this test
-            'parent' => $parentFolder->id, // Pass the parent file ID
+            'parent_id' => $parentFolder->id, // Pass the parent file ID
         ];
 
         // Mock the request object
         $request = $this->post('/file', $requestData);
 
-        // Assert that the controller responds with a redirect or any other expected behavior
-        $request->assertRedirect(); // Example assertion
+        $request->assertStatus(200);
         // Add more assertions based on your controller's behavior
     }
+
+ 
 }
