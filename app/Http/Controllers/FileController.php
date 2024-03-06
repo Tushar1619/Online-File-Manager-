@@ -124,7 +124,7 @@ class FileController extends Controller
 
     public function store(StoreFileRequest $request)
     {
-        // dd($request);
+      
         $data = $request->validated();
         $parent = $request->parent;
         $user = $request->user();

@@ -38,7 +38,6 @@ const emit = defineEmits(["close"]);
 function view() {
     httpGet(route("file.show", { filepath: props.file.storage_path }))
         .then((res) => {
-            console.log(res);
             filepath.value = res.path;
             showViewDialog.value = true;
             if (props.file.mime.includes("image")) {
@@ -60,8 +59,6 @@ function view() {
         .catch((error) => {
             console.log(error);
         });
-    // console.log(filepath);
-    // console.log("view invoked");
 }
 
 function close() {
