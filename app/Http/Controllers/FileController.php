@@ -383,9 +383,7 @@ class FileController extends Controller
 
         $files = FileResource::collection($files);
 
-        if ($request->wantsJson()) {
-            return $files;
-        }
+        
 
         return Inertia::render('SharedWithMe', compact('files'));
     }

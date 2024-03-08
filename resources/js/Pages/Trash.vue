@@ -101,9 +101,7 @@ const selected = ref({});
 const loadMoreIntersect = ref(null);
 
 const props = defineProps({
-    files: Object,
-    folder: Object,
-    ancestors: Object,
+    files: Object
 });
 
 const allFiles = ref({

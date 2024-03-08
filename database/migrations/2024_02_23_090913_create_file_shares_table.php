@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('file_shares', function (Blueprint $table) {
             $table->id();
 
+            // $table->unsignedTinyInteger('file_id');
+            // $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
+
             $table->foreignId('file_id')->constrained('files');
             $table->foreignId('user_id')->constrained('users');
 
