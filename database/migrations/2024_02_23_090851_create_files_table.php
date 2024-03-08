@@ -16,11 +16,11 @@ return new class extends Migration
 
             $table->string('name', length: 1024);
             $table->string('path', length: 1024)->nullable();
+            $table->string('storage_path',2000)->nullable();
             $table->nestedSet();
             $table->boolean('is_folder');
             $table->string('mime')->nullable();
             $table->integer('size')->nullable();
-            
             $table->timestamps();
 
             $table->foreignIdFor(\App\Models\User::class, 'created_by');
