@@ -171,11 +171,11 @@
                             <ViewFilesButton
                                 v-if="
                                     file.is_folder != 1 &&
-                                    (file.mime.includes('image') ||
-                                        file.mime.includes('pdf') ||
-                                        file.mime.includes('text') ||
-                                        file.mime.includes('video') ||
-                                        file.mime.includes('audio'))
+                                    (isImage(file) ||
+                                        isPDF(file) ||
+                                        isText(file) ||
+                                        isVideo(file) ||
+                                        isAudio(file))
                                 "
                                 :file="file"
                                 @close="toggleFileSelect(file)"
@@ -209,6 +209,7 @@ import { httpGet } from "@/Helper/http-helper.js";
 import { computed } from "vue";
 import ShareFilesButton from "@/Components/app/ShareFilesButton.vue";
 import ViewFilesButton from "@/Components/app/ViewFilesButton.vue";
+import { isAudio, isImage, isPDF, isText, isVideo } from "@/Helper/file-helper";
 
 let search = ref("");
 let params = null;
