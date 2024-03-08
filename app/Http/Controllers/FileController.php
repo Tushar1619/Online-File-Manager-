@@ -222,6 +222,8 @@ class FileController extends Controller
         if (!$all && empty($ids)) {
             return [
                 'message' => 'Please select files to download',
+                'url',
+                'filename',
             ];
         }
 
