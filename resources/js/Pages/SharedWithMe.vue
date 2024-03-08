@@ -1,5 +1,6 @@
 <template>
     <AuthenticatedLayout>
+        
         <nav class="flex items-center justify-end p-1 mb-3">
             <div>
                 <DownloadFilesButton
@@ -96,9 +97,7 @@ const selected = ref({});
 const loadMoreIntersect = ref(null);
 
 const props = defineProps({
-    files: Object,
-    folder: Object,
-    ancestors: Object,
+    files: Object
 });
 
 const allFiles = ref({
