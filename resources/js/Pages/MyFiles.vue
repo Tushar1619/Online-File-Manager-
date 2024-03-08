@@ -45,10 +45,7 @@
                         </svg>
                         <Link
                             :href="route('myFiles', { folder: ans.path })"
-
                             class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2"
-                        
-
                         >
                             {{ ans.name }}
                         </Link>
@@ -129,7 +126,6 @@
                                 : 'bg-white'
                         "
                     >
-                        <!-- Added at 5:35 -->
                         <td
                             class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-[30px] max-w-[30px] pr-0"
                         >
@@ -224,7 +220,6 @@ const props = defineProps({
     ancestors: Object,
 });
 
-
 const allFiles = ref({
     data: props.files.data,
     next: props.files.links.next,
@@ -277,7 +272,6 @@ const allSelected = ref(false);
 const selected = ref({});
 
 function onSelectAllChange() {
-    //using allFiles which is defined in previous portion of the video
     allFiles.value.data.forEach((f) => {
         selected.value[f.id] = allSelected.value;
     });
