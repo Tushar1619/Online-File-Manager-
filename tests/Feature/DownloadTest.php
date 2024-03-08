@@ -2,53 +2,63 @@
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\FileController;
-use App\Http\Requests\FilesActionRequest;
 use App\Models\File;
 use App\Models\User;
-use Illuminate\Http\Request;
-
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Request;
 use Tests\TestCase;
 
 class DownloadTest extends TestCase
 {
-    use RefreshDatabase;
+    // use RefreshDatabase;
+
+    public function testDownloadError()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->actingAs($user = User::factory()->create());
+
+        $requestData = [];
+
+        $request = $this->getJson('/file/download', $requestData);
+
+        $request->assertStatus(200);
+        $request->assertJsonStructure([
+            'message',
+        ]);
+    }
 
     public function testDownload()
     {
-        $this->withoutExceptionHandling();
-        // Create a user
+        // $this->withoutExceptionHandling();
         $user = User::factory()->create();
-
-        // Authenticate as the user
         $this->actingAs($user);
         // Create a parent folder
-        $parentFolder = File::factory()->create([
+        $parent = File::factory()->create([
             'is_folder' => true,
             'created_by' => $user->id,
+            'updated_by' => $user->id,
         ]);
 
-        // Mock the request data
+        // Set up data for the request
         $requestData = [
             'all' => true,
-            'parent' => $parentFolder,
+            'ids' => [],
+            'parent' => $parent,
         ];
 
-        // Create an instance of FilesActionRequest with the appropriate data
-        $request = FilesActionRequest::create('/download', 'GET', $requestData);
+        $request = new Request($requestData);
 
-        // Create an instance of your controller
-        $fileController = new FileController();
+        // Inject the request into the container
+        $this->instance(Request::class, $request);
 
-        // Call the download() method
-        $response = $fileController->download($request);
+        // Call the download method
+        $response = $this->json('GET', '/file/download');
 
-        // Assert that the response contains the expected data
-        $this->assertArrayHasKey('url', $response);
-        $this->assertArrayHasKey('filename', $response);
-        $this->assertNotEmpty($response['url']);
-        $this->assertNotEmpty($response['filename']);
+        // Assertions
+        $response->assertStatus(200);
+        $response->assertJson([
+            'url',
+            'filename',
+        ]);
     }
 }

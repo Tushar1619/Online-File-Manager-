@@ -5,15 +5,12 @@ namespace Tests\Feature;
 use App\Http\Controllers\FileController;
 use App\Models\File;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
 use Tests\TestCase;
 
-
 class CheckTrashTest extends TestCase
 {
-    use RefreshDatabase;
+    // use RefreshDatabase;
     /**
      * A basic feature test example.
      */
