@@ -16,6 +16,16 @@
 import { usePage } from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import { httpGet } from "@/Helper/http-helper.js";
+import {
+    isImage,
+    isPDF,
+    isAudio,
+    isVideo,
+    isWord,
+    isExcel,
+    isZip,
+    isText,
+} from "@/Helper/file-helper.js";
 import { ref } from "vue";
 import ViewDialog from "../ViewDialog.vue";
 
@@ -40,19 +50,19 @@ function view() {
         .then((res) => {
             filepath.value = res.path;
             showViewDialog.value = true;
-            if (props.file.mime.includes("image")) {
+            if (isImage(props.file)) {
                 showImage.value = true;
             }
-            if (props.file.mime.includes("pdf")) {
+            if (isPDF(props.file)) {
                 showPdf.value = true;
             }
-            if (props.file.mime.includes("text")) {
+            if (isText(props.file)) {
                 showText.value = true;
             }
-            if (props.file.mime.includes("video")) {
+            if (isVideo(props.file)) {
                 showVideo.value = true;
             }
-            if (props.file.mime.includes("audio")) {
+            if (isAudio(props.file)) {
                 showAudio.value = true;
             }
         })
